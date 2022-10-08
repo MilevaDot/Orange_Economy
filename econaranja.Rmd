@@ -1,0 +1,59 @@
+---
+title: "Ec Naranja"
+author: "Aaron Ilizarbe"
+date: "2022-10-07"
+output: html_document
+---
+
+```{r}
+orangeec <- read.csv("D:\\Mileva\\Platzi_Courses\\DATA_SCIENCE\\Curso_de_Fundamentos_de_R\\orangeec.csv")
+data(orangeec)
+summary(orangeec)
+```
+Parece que hay correlación entre aporte de economía naranja al pib y la tasa de desempleo
+```{r}
+pairs(orangeec[,6:10])
+```
+```{r}
+library(ggplot2)
+```
+```{r}
+ggplot() + geom_histogram(data=orangeec, aes(x=Internet.penetration...population), fill="red", color="yellow",
+                          binwidth = 5) + 
+  scale_x_continuous(breaks = seq(40, max(100), 5))+
+  labs(x="Penetración internet(%)población", y="Cantidad de países",
+       title="Penetración de internet en países latam") + 
+  theme(legend.position = "none") + 
+  theme(panel.background = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+```{r}
+library(dplyr)
+```
+```{r}
+economy <- mean(orangeec$GDP.PC)
+economy
+```
+```{r}
+orangeec <- orangeec %>%
+  mutate(Strong_economy = ifelse(GDP.PC < economy,
+                                 "Por debajo promedio pib per cápita",
+                                 "Sobre-Arriba promedio pib per cápita"))
+```
+```{r}
+ggplot(orangeec, aes(x=Strong_economy, y=Creat.Ind...GDP,
+                     fill=Strong_economy))+
+  geom_boxplot(alpha=0.4) + 
+  labs(x="Tipo de país", y="Aporte economía naranja al pib",
+       title="Aporte economía naranja al pib países latam con alto y bajo pib
+       per cápita") +
+  theme(legend.position = "none") + 
+  theme(panel.background = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+El boxplot indica que los paises sobre el promedio en pib per cápita,
+tienen una dispersión mucho más alta en cuanto a los aportes de la economía
+naranja al pib del país. OJO confirmar con desviación estándar.
+
+
+

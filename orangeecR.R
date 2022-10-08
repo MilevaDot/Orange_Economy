@@ -156,3 +156,201 @@ ggplot(orangeec, aes(Education.invest...GDP,Unemployment)) +
   geom_point(aes(color=factor(Strong_economy), size=X..pop.below.poverty.line)) + 
   labs(x="Inversión en Educación", y="Desempleo",
        title="Relación de inversión y Desempleo según economía y nivel de pobreza.")
+
+my_graph <- ggplot(orangeec, aes(Internet.penetration...population,
+                                 Creat.Ind...GDP, label=row.names(orangeec))) + 
+  geom_point() + 
+  labs(x="Penetración internet", y ="Aporte economía naranja",
+       title="Penetración Internet y aporte economía naranja")
+my_graph
+
+p = ggplotly(my_graph)
+p
+
+#
+pairs(mtcars[,1:5])
+pairs(mtcars)
+
+#
+newdata <- subset(mtcars, select=c(2,7:8,11,12))
+pairs(newdata)
+
+#
+pairs(mtcars[,-c(1,3,5,6,9,10)])
+
+#
+Eficientes <-filter(mtcars, mpg>=30)
+Eficientes
+
+#
+merc <-mtcars %>%
+  filter(str_detect(model,"Merc"))
+merc
+
+#
+pairs(merc[,2:6])
+
+#
+cor(merc[,2:6])
+
+#
+cor(newdata)
+
+#
+cor(merc[,2:6])
+
+#
+pairs(orangeec[,2:6])
+
+#
+pairs(orangeec[,5:10])
+
+#
+newdata <-subset(orangeec,select=c(5,6,10,11,12,13))
+newdata
+
+pairs(newdata)
+
+#
+cor(orangeec[,2:6])
+
+#
+cor(orangeec[,2:6], use="complete.obs")
+
+#
+cor(orangeec[,5:10], use="complete.obs")
+
+#
+cor(newdata,use="complete.obs")
+
+#
+summary(mtcars)
+
+#
+desv <- sd(mtcars$mpg)
+prom <- mean(mtcars$mpg)
+desv
+prom
+
+#
+CoefVar <- (desv/prom)*100
+CoefVar
+
+#
+desv <- sd(orangeec$Internet.penetration...population)
+desv
+
+prom <- mean(orangeec$Internet.penetration...population)
+prom
+
+#
+CoefVar <- (desv/prom)*100
+CoefVar
+
+#
+summary(orangeec)
+
+#
+mean(orangeec$Creat.Ind...GDP)
+mean(orangeec$Creat.Ind...GDP, na.rm=TRUE)
+prom <- mean(orangeec$Creat.Ind...GDP, na.rm=TRUE)
+
+#
+sd(orangeec$Creat.Ind...GDP)
+sd(orangeec$Creat.Ind...GDP, na.rm=TRUE)
+desv <- sd(orangeec$Creat.Ind...GDP, na.rm=TRUE)
+
+#
+CoefVar <- (desv/prom)*100
+CoefVar
+
+#Ajustando datos para mejorar visualizaciones
+eficientes <- mean(mtcars$mpg)
+eficientes
+
+mtcars <- mtcars %>%
+  mutate(Mas_eficientes=ifelse(mpg<eficientes,
+                               "bajo promedio", "en ó sobre promedio"))
+
+Mas_veloces <- mtcars[mtcars$qsec<16,]
+Mas_veloces
+
+mtcars <- mtcars %>%
+  mutate(Velocidad_Cuarto_milla=ifelse(qsec < 16,
+                                       "Menos 16 segs",
+                                       "Más 16 segs"))
+
+#
+mtcars <- mtcars %>%
+  mutate(Peso_kilos=(wt/2)*1000)
+
+mtcars <- mtcars %>%
+  mutate(Peso=ifelse(Peso_kilos <= 1500,
+                     "Livianos", "Pesados"))
+
+#
+orangeec <- orangeec %>%
+  mutate(Crecimiento_GDP = ifelse(GDP.Growth.. >= 2.5,
+                                  "2.5% ó más", "Menos 2.5%"))
+
+#
+orangeec <- orangeec %>%
+  mutate(Anaranjados=ifelse(Creat.Ind...GDP >= 2.5,
+                            "Mas anaranjados", "Menos anaranjados"))
+
+#ranking
+orangeec %>%
+  arrange(desc(Creat.Ind...GDP))
+
+TopNaranjas <- orangeec %>%
+  filter(Country %in%  c("Mexico", "Panama", "Argentina", "Colombia", "Brazil", "Paraguay"))
+
+TopNaranjas
+
+#
+TopNaranjas %>%
+  arrange(desc(Creat.Ind...GDP))
+
+#
+mtcars %>%
+  arrange(desc(Peso_kilos))
+
+Mas_pesados <- mtcars %>%
+  filter(model %in% c("Lincoln Continental", "Chrysler Imperial",
+                      "Cadillac Fleetwood", "Merc 450SE"))
+Mas_pesados
+
+#
+ggplot(Mas_pesados, aes(x=hp, y=mpg)) + 
+  geom_point() + 
+  facet_wrap(~model)
+
+#
+ggplot(mtcars, aes(x=cyl, y=mpg, size=Peso)) + 
+  geom_point()+
+  facet_wrap(~ am)
+
+ggplot(mtcars, aes(x=cyl, y=mpg, size=Peso_kilos)) + 
+  geom_point()+
+  facet_wrap(~ am)
+
+#
+ggplot(TopNaranjas, aes(x=Internet.penetration...population,
+                        y=Services...GDP, size=GDP.PC))+
+  geom_point()+
+  facet_wrap(~Country)
+
+#
+ggplot(TopNaranjas, aes(x=Education.invest...GDP,
+                        y=Creat.Ind...GDP, size=Unemployment))+
+  geom_point()+
+  facet_wrap(~Country)
+
+#
+myColors <- brewer.pal(9, "Reds")
+
+ggplot(TopNaranjas, aes(x=Internet.penetration...population,
+                        y=GDP.PC, fill=Creat.Ind...GDP))+ 
+  geom_tile()+
+  facet_wrap(~Country) + 
+  scale_fill_gradientn(colors=myColors)
